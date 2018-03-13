@@ -13,7 +13,7 @@ import time
 from subprocess import call
 
 
-POMO_M = 40     # 40m
+POMO_M = 40     # default 40m
 
 
 def get_status_file():
@@ -38,6 +38,7 @@ def make_a_refresh():
 def print_submenu():
     print('---')
     print('Start | bash="{}" param1="-s"  terminal=false'.format(get_file_path()))
+    print('X Start | bash="{}" param1="-X"  terminal=true'.format(get_file_path()))
     print('Stop | bash="{}" param1="-x"  terminal=false'.format(get_file_path()))
 
 
@@ -64,23 +65,40 @@ def set_start_time_to_now():
     set_config({'start_time': int(time.time())})
 
 
+def set_start_time_with_input():
+    while True:
+        text = input('x minutes to count down: ')
+        try:
+            X = int(text)
+            break
+        except ValueError:
+            pass
+    now = int(time.time())
+    start_time = now + (X - POMO_M) * 60
+    set_config({'start_time': start_time})
+
+
 def clear_start_time():
     set_config({'start_time': 0})
 
 
 def make_notify():
     # set to your own notification func
-    call(['/Users/clip/script/big', '🍻'])
+    call(['/Users/clip/script/big', '🤣'])
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--start", action="store_true", help='Start')
+    parser.add_argument("-X", "--x_start", action="store_true", help='X Start')
     parser.add_argument("-x", "--stop", action="store_true", help='Stop')
     args = parser.parse_args()
 
     if args.start:
         set_start_time_to_now()
+        make_a_refresh()
+    elif args.x_start:
+        set_start_time_with_input()
         make_a_refresh()
     elif args.stop:
         clear_start_time()
@@ -90,7 +108,7 @@ def main():
     start_time = config.get('start_time', 0)
     now = int(time.time())
     m = math.ceil((start_time + POMO_M * 60 - now) / 60.0)
-    if 0 < m <= POMO_M:
+    if 0 < m:
         print('== {} =='.format(m))
     elif m == 0:
         print('🍅')
