@@ -36,10 +36,13 @@ def make_a_refresh():
 
 
 def print_submenu():
+    file_path = get_file_path()
     print('---')
-    print('Start | bash="{}" param1="-s"  terminal=false'.format(get_file_path()))
-    print('X Start | bash="{}" param1="-X"  terminal=true'.format(get_file_path()))
-    print('Stop | bash="{}" param1="-x"  terminal=false'.format(get_file_path()))
+    print(f'Start | bash="{file_path}" param1="-s"  terminal=false')
+    print('X Start')
+    for X in [10, 15, 20, 25, 30, 35]:
+        print(f'-- {X} | bash="{file_path}" param1="-X {X}"  terminal=false')
+    print(f'Stop | bash="{file_path}" param1="-x"  terminal=false')
 
 
 def set_config(d):
@@ -65,14 +68,7 @@ def set_start_time_to_now():
     set_config({'start_time': int(time.time())})
 
 
-def set_start_time_with_input():
-    while True:
-        text = input('x minutes to count down: ')
-        try:
-            X = int(text)
-            break
-        except ValueError:
-            pass
+def set_start_time_to_x(X):
     now = int(time.time())
     start_time = now + (X - POMO_M) * 60
     set_config({'start_time': start_time})
@@ -90,7 +86,7 @@ def make_notify():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--start", action="store_true", help='Start')
-    parser.add_argument("-X", "--x_start", action="store_true", help='X Start')
+    parser.add_argument("-X", "--x_start", type=int, help='Start with X minutes')
     parser.add_argument("-x", "--stop", action="store_true", help='Stop')
     args = parser.parse_args()
 
@@ -98,7 +94,7 @@ def main():
         set_start_time_to_now()
         make_a_refresh()
     elif args.x_start:
-        set_start_time_with_input()
+        set_start_time_to_x(args.x_start)
         make_a_refresh()
     elif args.stop:
         clear_start_time()
