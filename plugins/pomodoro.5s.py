@@ -31,7 +31,7 @@ def get_file_name():
 
 
 def make_a_refresh():
-    s = "bitbar://refreshPlugin?name={}".format(get_file_name())
+    s = f"bitbar://refreshPlugin?name={get_file_name()}"
     call(['open', s])
 
 
@@ -105,7 +105,7 @@ def main():
     now = int(time.time())
     m = math.ceil((start_time + POMO_M * 60 - now) / 60.0)
     if 0 < m:
-        print('== {} =='.format(m))
+        print(f'== {m} ==')
     elif m == 0:
         print('🍅')
         make_notify()
