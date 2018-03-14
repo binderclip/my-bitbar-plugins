@@ -7,7 +7,7 @@
 # <bitbar.dependencies>python3</bitbar.dependencies>
 import argparse
 import os
-from subprocess import call
+import subprocess
 
 
 def get_text_file():
@@ -36,18 +36,20 @@ def read_and_print():
 
 
 def set_text():
-    text = input('text to show: ')
+    ret = subprocess.run(['osascript', '-e', r'''set input_text to text returned of (display dialog "Please input text here:" default answer "" with title "Set the Text")'''], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    text = ret.stdout.strip().decode('utf-8')
+
     text_file = get_text_file()
-    with open(text_file, 'w') as f:
+    with open(text_file, 'w', encoding='utf-8') as f:
         f.write(text)
     # refresh
     s = "bitbar://refreshPlugin?name={}".format(get_file_name())
-    call(['open', s])
+    subprocess.run(['open', s])
 
 
 def print_submenu():
     print('---')
-    print('Set the Text | bash="{}" param1="-s"  terminal=true'.format(get_file_path()))
+    print('Set the Text | bash="{}" param1="-s"  terminal=false'.format(get_file_path()))
 
 
 def main():
