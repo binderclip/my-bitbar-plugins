@@ -40,7 +40,7 @@ def print_submenu():
     print('---')
     print(f'Start | bash="{file_path}" param1="-s"  terminal=false')
     print('X Start')
-    for X in [10, 15, 20, 25, 30, 35]:
+    for X in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70]:
         print(f'-- {X} | bash="{file_path}" param1="-X {X}"  terminal=false')
     print(f'Stop | bash="{file_path}" param1="-x"  terminal=false')
 
@@ -80,7 +80,7 @@ def clear_start_time():
 
 def make_notify():
     # set to your own notification func
-    call(['/Users/clip/script/big', '🤣'])
+    call(['/Users/clip/script/big', '✋'])
 
 
 def main():
