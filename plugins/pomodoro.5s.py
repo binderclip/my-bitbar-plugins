@@ -13,7 +13,7 @@ import time
 from subprocess import call
 
 
-POMO_M = 40     # default 40m
+POMO_M = 25     # default 25m
 
 
 def get_status_file():
