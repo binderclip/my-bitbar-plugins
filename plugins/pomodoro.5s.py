@@ -85,12 +85,12 @@ def clear_start_time():
     update_config({'start_time': 0})
 
 
-def set_tomatoes(n):
-    update_config({'tomatoes': n})
+def set_pomodoroes(n):
+    update_config({'pomodoroes': n})
 
 
-def clear_gained_tomatoes():
-    update_config({'tomatoes': 0})
+def clear_gained_pomodoroes():
+    update_config({'pomodoroes': 0})
 
 
 def make_notify():
@@ -98,12 +98,19 @@ def make_notify():
     call(['/Users/clip/script/big', '✋'])
 
 
+def print_pomodoroes(n):
+    group = 5
+    pomodoro_groups = '{}.'.format('🍅' * 5) * int(n / group) + '🍅' * (n % group)
+    pomodoro_groups = pomodoro_groups.strip('.')
+    print(pomodoro_groups or '>>>')
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--start", action="store_true", help='Start')
     parser.add_argument("-X", "--x_start", type=int, help='Start with X minutes')
     parser.add_argument("-x", "--stop", action="store_true", help='Stop')
-    parser.add_argument("-c", "--clear", action="store_true", help='Clear tomatoes')
+    parser.add_argument("-c", "--clear", action="store_true", help='Clear pomodoroes')
     args = parser.parse_args()
 
     if args.start:
@@ -119,25 +126,25 @@ def main():
         make_a_refresh()
         return
     elif args.clear:
-        clear_gained_tomatoes()
+        clear_gained_pomodoroes()
         make_a_refresh()
         return
 
     config = read_config()
     start_time = config.get('start_time', 0)
-    gained_tomatoes = config.get('tomatoes', 0)
+    gained_pomodoroes = config.get('pomodoroes', 0)
     now = int(time.time())
     m = math.ceil((start_time + POMO_M * 60 - now) / 60.0)
     if 0 < m:
         print(f'== {m} ==')
     elif m == 0:
-        gained_tomatoes += 1
-        print('🍅' * gained_tomatoes)
+        gained_pomodoroes += 1
+        print_pomodoroes(gained_pomodoroes)
         make_notify()
         clear_start_time()
-        set_tomatoes(gained_tomatoes)
+        set_pomodoroes(gained_pomodoroes)
     else:
-        print(('🍅' * gained_tomatoes) or '>>>')
+        print_pomodoroes(gained_pomodoroes)
     print_submenu()
 
 
