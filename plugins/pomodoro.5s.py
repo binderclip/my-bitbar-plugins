@@ -40,9 +40,10 @@ def print_submenu():
     print('---')
     print(f'Start | bash="{file_path}" param1="-s"  terminal=false')
     print('X Start')
-    for X in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70]:
+    for X in [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70]:
         print(f'-- {X} | bash="{file_path}" param1="-X {X}"  terminal=false')
     print(f'Stop | bash="{file_path}" param1="-x"  terminal=false')
+    print(f'Clear | bash="{file_path}" param1="-c"  terminal=false')
 
 
 def set_config(d):
@@ -64,18 +65,32 @@ def read_config():
     return config
 
 
+def update_config(d):
+    config = read_config()
+    config.update(d)
+    set_config(config)
+
+
 def set_start_time_to_now():
-    set_config({'start_time': int(time.time())})
+    update_config({'start_time': int(time.time())})
 
 
 def set_start_time_to_x(X):
     now = int(time.time())
     start_time = now + (X - POMO_M) * 60
-    set_config({'start_time': start_time})
+    update_config({'start_time': start_time})
 
 
 def clear_start_time():
-    set_config({'start_time': 0})
+    update_config({'start_time': 0})
+
+
+def set_tomatoes(n):
+    update_config({'tomatoes': n})
+
+
+def clear_gained_tomatoes():
+    update_config({'tomatoes': 0})
 
 
 def make_notify():
@@ -88,30 +103,41 @@ def main():
     parser.add_argument("-s", "--start", action="store_true", help='Start')
     parser.add_argument("-X", "--x_start", type=int, help='Start with X minutes')
     parser.add_argument("-x", "--stop", action="store_true", help='Stop')
+    parser.add_argument("-c", "--clear", action="store_true", help='Clear tomatoes')
     args = parser.parse_args()
 
     if args.start:
         set_start_time_to_now()
         make_a_refresh()
+        return
     elif args.x_start:
         set_start_time_to_x(args.x_start)
         make_a_refresh()
+        return
     elif args.stop:
         clear_start_time()
         make_a_refresh()
+        return
+    elif args.clear:
+        clear_gained_tomatoes()
+        make_a_refresh()
+        return
 
     config = read_config()
     start_time = config.get('start_time', 0)
+    gained_tomatoes = config.get('tomatoes', 0)
     now = int(time.time())
     m = math.ceil((start_time + POMO_M * 60 - now) / 60.0)
     if 0 < m:
         print(f'== {m} ==')
     elif m == 0:
-        print('🍅')
+        gained_tomatoes += 1
+        print('🍅' * gained_tomatoes)
         make_notify()
         clear_start_time()
+        set_tomatoes(gained_tomatoes)
     else:
-        print('🍅')
+        print(('🍅' * gained_tomatoes) or '>>>')
     print_submenu()
 
 
