@@ -36,7 +36,13 @@ def read_and_print():
 
 
 def set_text():
-    ret = subprocess.run(['osascript', '-e', r'''set input_text to text returned of (display dialog "Please input text here:" default answer "" with title "Set the Text")'''], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    ret = subprocess.run(
+        [
+            'osascript',
+            '-e',
+            r'set input_text to text returned of (display dialog "Please input text here:"'
+            ' default answer "" with title "Set the Text")',
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     text = ret.stdout.strip().decode('utf-8')
 
     text_file = get_text_file()
