@@ -10,7 +10,11 @@ import json
 import math
 import os
 import time
+import datetime
+import uuid
 from subprocess import call
+
+import requests
 
 
 POMO_M = 25     # default 25m
@@ -95,6 +99,7 @@ def clear_gained_pomodoroes():
 
 def make_notify():
     # set to your own notification func
+    dida_pomo()
     call(['/Users/clip/script/big', '✋'])
 
 
@@ -103,6 +108,25 @@ def print_pomodoroes(n):
     pomodoro_groups = '{}.'.format('🍅' * 5) * int(n / group) + '🍅' * (n % group)
     pomodoro_groups = pomodoro_groups.strip('.')
     print(pomodoro_groups or '>>>')
+
+
+def dida_pomo():
+    now = datetime.datetime.utcnow()
+    d = [{
+        "local": True,
+        "id": str(uuid.uuid4()).replace('-', '')[:24],
+        "startTime": (now - datetime.timedelta(minutes=POMO_M)).isoformat()[:-3] + '+0000',
+        "status": 1,
+        "endTime": now.isoformat()[:-3] + '+0000',
+        "taskId": ""
+    }]
+    cookies = {
+        'UM_distinctid': '111111111111111111111111111111111111111111111111111111111111',
+        't': 'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',
+    }
+    requests.post(url='https://api.dida365.com/api/v2/batch/pomodoro',
+                  json=d,
+                  cookies=cookies)
 
 
 def main():
